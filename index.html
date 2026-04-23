@@ -108,7 +108,7 @@
   .card-footer { padding: 4px 12px; border-top: 1px solid var(--border); font-size: 8.5px; color: var(--text3); display: flex; justify-content: space-between; }
 
   /* SVG */
-  #svg-layer { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+  #svg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; transform-origin: 0 0; }
   .fk-line { fill: none; stroke-width: 1.5; }
   .fk-line.dim { stroke: rgba(255,255,255,0.04); stroke-dasharray: 4 3; }
   .fk-line.active-out { stroke: rgba(59,130,246,0.85); stroke-width: 2; }
@@ -528,19 +528,29 @@ function updateLines() {
     if (!fromEl || !toEl || fromEl.style.display==='none' || toEl.style.display==='none') return;
 
     const fp = tablePositions[fk.from_table], tp = tablePositions[fk.to_table];
-    const fh = fromEl.offsetHeight, th = toEl.offsetHeight;
-    const x1 = fp.x + 130, y1 = fp.y + fh/2;
-    const x2 = tp.x + 130, y2 = tp.y + th/2;
-    const cx = (x1+x2)/2;
+    const x1 = fp.x + 260, y1 = fp.y + 24; 
+    const x2 = tp.x,       y2 = tp.y + 24;
+    const cx = x1 + (x2 - x1) * 0.4;
 
     const color = fk.type==='out' ? 'rgba(59,130,246,0.85)' : fk.type==='in' ? 'rgba(52,211,153,0.75)' : 'rgba(59,130,246,0.2)';
     const mid = `m${idx}`;
-    defs.innerHTML += `<marker id="a${mid}" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-      <path d="M0,0 L5,2.5 L0,5 Z" fill="${color}"/>
-    </marker>`;
+    
+    // Only create marker if it doesn't exist to avoid DOM bloat
+    let marker = defs.querySelector(`#a${mid}`);
+    if (!marker) {
+      marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      marker.setAttribute('id', `a${mid}`);
+      marker.setAttribute('markerWidth', '6');
+      marker.setAttribute('markerHeight', '6');
+      marker.setAttribute('refX', '5');
+      marker.setAttribute('refY', '3');
+      marker.setAttribute('orient', 'auto');
+      marker.innerHTML = `<path d="M0,0 L6,3 L0,6 Z" fill="${color}"/>`;
+      defs.appendChild(marker);
+    }
 
     const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d', `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`);
+    path.setAttribute('d', `M ${x1} ${y1} C ${cx} ${y1}, ${x1 + (x2-x1)*0.6} ${y2}, ${x2} ${y2}`);
     path.setAttribute('class', `fk-line ${fk.type==='global'?'global':fk.type==='out'?'active-out':'active-in'}`);
     path.setAttribute('marker-end', `url(#a${mid})`);
     svgLayer.appendChild(path);

@@ -6,10 +6,19 @@ Este repositorio forma parte de la Unidad de Información y Análisis (UIA) de C
 ---
 
 ## Comandos de Referencia Rápida
-- **Visualizar en local:** Abrir archivos HTML en el navegador o usar un servidor estático local como `npx serve` o la extensión Live Server de VS Code.
+- **Desarrollo:** `cd frontend && npm run dev`
+- **Compilar:** `cd frontend && npm run build` (regenera los datos y compila)
+- **Regenerar datos:** `cd frontend && npm run data`
+- **Lint:** `cd frontend && npm run lint` (oxlint, no ESLint)
 
 ## Tecnología y Stack
-- **Frontend:** HTML5 estático, Javascript (librerías de gráficos/grafos nativas como Cytoscape.js si aplica)
+- **Frontend:** React 19 + Vite en `frontend/`. Sin librerías de grafos, de UI ni de
+  virtualización: el canvas, el layout y el minimapa están escritos a mano con DOM/SVG/CSS.
+  **No agregar dependencias npm sin discutirlo.**
+- **Datos:** JSON generados por los scripts de `scripts/` a partir de `index.html` y del
+  Excel de `INSUMO/`. Nunca se editan a mano.
+- **Legacy:** `index.html` en la raíz es el diagrama original. Se conserva como fuente de
+  datos y como referencia visual del port en la pestaña Legacy; no se rediseña.
 
 ## Guía de Estilo y Convenciones
 - **Idioma del código:** Inglés para infraestructura, nombres de variables y funciones. Español para comentarios de negocio e interfaz de usuario.

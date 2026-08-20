@@ -1,0 +1,160 @@
+{
+  "saf": {
+    "id": "saf",
+    "label": "SAF",
+    "engine": "Oracle",
+    "description": "Sistema de Administración Forestal — modelo relacional heredado.",
+    "source": "index.html",
+    "counts": {
+      "tables": 327,
+      "columns": 2003,
+      "fks": 416,
+      "rows": 67147790
+    },
+    "byCategory": {
+      "operacional": 262,
+      "transaccional": 29,
+      "estructural": 19,
+      "catalogo": 10,
+      "relacional": 6,
+      "hub": 1
+    },
+    "topReferenced": [
+      {
+        "name": "SOLICITUD",
+        "fk_in": 31,
+        "category": "transaccional"
+      },
+      {
+        "name": "PREDIO",
+        "fk_in": 27,
+        "category": "hub"
+      },
+      {
+        "name": "LOCALIDAD",
+        "fk_in": 23,
+        "category": "catalogo"
+      },
+      {
+        "name": "TIPO",
+        "fk_in": 20,
+        "category": "catalogo"
+      },
+      {
+        "name": "FICHA",
+        "fk_in": 19,
+        "category": "transaccional"
+      }
+    ],
+    "topRows": [
+      {
+        "name": "DOCUMENTO",
+        "num_rows": 6512102,
+        "category": "transaccional"
+      },
+      {
+        "name": "LOG",
+        "num_rows": 5982277,
+        "category": "transaccional"
+      },
+      {
+        "name": "OTRODATO",
+        "num_rows": 5216669,
+        "category": "transaccional"
+      },
+      {
+        "name": "TAREA",
+        "num_rows": 4466734,
+        "category": "transaccional"
+      },
+      {
+        "name": "UAACCION",
+        "num_rows": 3939929,
+        "category": "transaccional"
+      }
+    ],
+    "documented": {
+      "tables": 144,
+      "total": 327
+    }
+  },
+  "sidco": {
+    "id": "sidco",
+    "label": "SIDCO",
+    "engine": "PostgreSQL",
+    "description": "Diccionario de datos del esquema public — gestión de incendios forestales.",
+    "source": "INSUMO/DICCIONARIO_DATOS_public_20260720_095344.xlsx",
+    "counts": {
+      "tables": 94,
+      "columns": 1390,
+      "fks": 116,
+      "rows": 1749913571
+    },
+    "byCategory": {
+      "transaccional": 11,
+      "hub": 2,
+      "estructural": 18,
+      "operacional": 58,
+      "relacional": 3,
+      "catalogo": 2
+    },
+    "topReferenced": [
+      {
+        "name": "incendio",
+        "fk_in": 25,
+        "category": "hub"
+      },
+      {
+        "name": "recurso",
+        "fk_in": 16,
+        "category": "hub"
+      },
+      {
+        "name": "institucion",
+        "fk_in": 13,
+        "category": "catalogo"
+      },
+      {
+        "name": "persona",
+        "fk_in": 9,
+        "category": "relacional"
+      },
+      {
+        "name": "perfil",
+        "fk_in": 8,
+        "category": "relacional"
+      }
+    ],
+    "topRows": [
+      {
+        "name": "log",
+        "num_rows": 1564656384,
+        "category": "transaccional"
+      },
+      {
+        "name": "monitoreo_sistema",
+        "num_rows": 86030704,
+        "category": "transaccional"
+      },
+      {
+        "name": "monitoreo_general",
+        "num_rows": 67504176,
+        "category": "transaccional"
+      },
+      {
+        "name": "bitacora",
+        "num_rows": 10672492,
+        "category": "transaccional"
+      },
+      {
+        "name": "apertura_persona",
+        "num_rows": 6775600,
+        "category": "transaccional"
+      }
+    ],
+    "documented": {
+      "tables": 26,
+      "total": 94
+    }
+  }
+}

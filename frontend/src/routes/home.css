@@ -1,0 +1,352 @@
+/* Portada: explica qué es la aplicación y encamina a cada vista. */
+
+.home {
+  height: 100%;
+  overflow-y: auto;
+  background:
+    radial-gradient(1100px 460px at 12% -8%, var(--accent-soft), transparent 65%),
+    var(--bg);
+}
+
+.home-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 44px 28px 72px;
+}
+
+.hero-kicker {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  max-width: 20ch;
+}
+
+.hero p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text2);
+  max-width: 68ch;
+}
+
+.hero p + p {
+  margin-top: 12px;
+}
+
+.section {
+  margin-top: 52px;
+}
+
+.section-title {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--text3);
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* --- Tarjetas de vista --- */
+
+.view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.view-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 12px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.view-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.view-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.view-card h2 {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.view-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  margin-left: auto;
+}
+
+.view-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+  flex: 1;
+}
+
+.kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kpi {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 10px;
+  color: var(--text3);
+  line-height: 1.4;
+}
+
+.kpi b {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.view-cta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* --- Preguntas --- */
+
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.qa {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+}
+
+.qa q {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.qa span {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text2);
+}
+
+/* --- Leyenda de categorías --- */
+
+.cat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.cat-table th {
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text3);
+  font-weight: 700;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.cat-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+
+.cat-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.cat-table .num {
+  font-family: var(--font-mono);
+  text-align: right;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.cat-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+/* --- Fuentes de datos --- */
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.source {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.source h3 {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.source code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.home-foot {
+  margin-top: 48px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.7;
+}
+
+/* --- Carga diferida de vistas --- */
+
+.route-loading {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text2);
+  font-size: 13px;
+}
+
+.route-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: route-spin 0.8s linear infinite;
+}
+
+@keyframes route-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Atajos --- */
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 8px 18px;
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text2);
+}
+
+.shortcut kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 3px 7px;
+  min-width: 34px;
+  text-align: center;
+  flex-shrink: 0;
+}

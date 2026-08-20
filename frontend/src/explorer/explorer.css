@@ -1,0 +1,1022 @@
+/* Explorador de esquemas (vistas SAFF y SIDCO).
+   Tokens propios, verificados contra WCAG: bordes ≥3:1 (1.4.11) y textos ≥4.5:1
+   sobre el fondo del chip, en tema oscuro y claro. */
+
+.ex {
+  --ex-bg: #0b0e14;
+  --ex-surface: #12161e;
+  --ex-surface2: #161b24;
+  --ex-surface3: #1e2532;
+  --ex-border: #232a36;
+  --ex-border2: #313a4a;
+  --ex-text: #e6edf7;
+  --ex-text2: #a3b0c2;
+  --ex-text3: #8593a8;
+  --ex-accent: #60a5fa;
+  --ex-accent-soft: rgba(96, 165, 250, 0.16);
+  --ex-pk: #fbbf24;
+  --ex-fk: #34d399;
+  --ex-path: #c4b5fd;
+  --ex-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+
+  --ex-c-hub: #fb7185;
+  --ex-c-transaccional: #60a5fa;
+  --ex-c-relacional: #34d399;
+  --ex-c-catalogo: #c4b5fd;
+  --ex-c-estructural: #fbbf24;
+  --ex-c-operacional: #94a3b8;
+
+  --ex-rail: 268px;
+  --ex-panel: 372px;
+
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  background: var(--ex-bg);
+  color: var(--ex-text);
+  position: relative;
+}
+
+[data-theme="light"] .ex {
+  --ex-bg: #eef1f6;
+  --ex-surface: #ffffff;
+  --ex-surface2: #ffffff;
+  --ex-surface3: #e7ecf3;
+  --ex-border: #d8dfe9;
+  --ex-border2: #b9c4d3;
+  --ex-text: #0f172a;
+  --ex-text2: #3f4c60;
+  --ex-text3: #5b6879;
+  --ex-accent: #1d4ed8;
+  --ex-accent-soft: rgba(29, 78, 216, 0.1);
+  --ex-pk: #a16207;
+  --ex-fk: #047857;
+  --ex-path: #6d28d9;
+  --ex-shadow: 0 10px 34px rgba(15, 23, 42, 0.16);
+
+  --ex-c-hub: #be123c;
+  --ex-c-transaccional: #1d4ed8;
+  --ex-c-relacional: #047857;
+  --ex-c-catalogo: #6d28d9;
+  --ex-c-estructural: #a16207;
+  --ex-c-operacional: #475569;
+}
+
+/* ============ Riel izquierdo ============ */
+
+.ex-rail {
+  width: var(--ex-rail);
+  flex-shrink: 0;
+  background: var(--ex-surface);
+  border-right: 1px solid var(--ex-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ex-rail-head {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--ex-border);
+}
+
+.ex-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ex-title b {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.ex-title span {
+  font-size: 10px;
+  color: var(--ex-text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ex-search {
+  position: relative;
+}
+
+.ex-search input {
+  width: 100%;
+  background: var(--ex-surface3);
+  border: 1px solid var(--ex-border2);
+  border-radius: 8px;
+  color: var(--ex-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 32px 8px 11px;
+  outline: none;
+}
+
+.ex-search input::placeholder {
+  color: var(--ex-text3);
+}
+
+.ex-search input:focus {
+  border-color: var(--ex-accent);
+}
+
+.ex-search kbd {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ex-text3);
+  border: 1px solid var(--ex-border2);
+  border-radius: 4px;
+  padding: 1px 4px;
+  pointer-events: none;
+}
+
+.ex-scroll {
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ex-border2) transparent;
+}
+
+.ex-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ex-scroll::-webkit-scrollbar-thumb {
+  background: var(--ex-border2);
+  border-radius: 4px;
+}
+
+.ex-group {
+  border-bottom: 1px solid var(--ex-border);
+  padding: 10px 12px 12px;
+}
+
+.ex-group-title {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  color: var(--ex-text3);
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ex-linkbtn {
+  background: none;
+  border: 0;
+  color: var(--ex-accent);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ex-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ex-cat {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ex-text3);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ex-cat:hover {
+  background: var(--ex-surface3);
+  color: var(--ex-text);
+}
+
+.ex-cat[aria-pressed="true"] {
+  color: var(--ex-text);
+  background: var(--ex-surface3);
+  border-color: var(--ex-border2);
+}
+
+.ex-cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.35;
+}
+
+.ex-cat[aria-pressed="true"] .ex-cat-dot {
+  opacity: 1;
+}
+
+.ex-cat-n {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.ex-results-empty {
+  font-size: 11.5px;
+  color: var(--ex-text3);
+  line-height: 1.6;
+  padding: 4px 2px;
+}
+
+.ex-res {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ex-text2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ex-res:hover {
+  background: var(--ex-surface3);
+  color: var(--ex-text);
+}
+
+.ex-res-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ex-res-sub {
+  color: var(--ex-text3);
+  font-size: 10px;
+}
+
+.ex-res-strong {
+  color: var(--ex-accent);
+}
+
+.ex-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--ex-text2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+  border-left: 2px solid transparent;
+}
+
+.ex-item:hover {
+  background: var(--ex-surface3);
+  color: var(--ex-text);
+}
+
+.ex-item[aria-current="true"] {
+  background: var(--ex-accent-soft);
+  color: var(--ex-accent);
+  border-left-color: var(--ex-accent);
+}
+
+.ex-item-n {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--ex-text3);
+}
+
+/* ============ Lienzo ============ */
+
+.ex-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ex-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--ex-surface);
+  border-bottom: 1px solid var(--ex-border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ex-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  background: var(--ex-surface3);
+  border: 1px solid var(--ex-border2);
+  border-radius: 7px;
+  color: var(--ex-text2);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ex-btn:hover {
+  border-color: var(--ex-accent);
+  color: var(--ex-text);
+}
+
+.ex-btn[aria-pressed="true"] {
+  background: var(--ex-accent);
+  border-color: var(--ex-accent);
+  color: #fff;
+}
+
+.ex-stat {
+  font-size: 10.5px;
+  color: var(--ex-text3);
+  white-space: nowrap;
+}
+
+.ex-stat b {
+  font-family: var(--font-mono);
+  color: var(--ex-text2);
+  font-weight: 600;
+}
+
+.ex-spacer {
+  margin-left: auto;
+}
+
+.ex-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.ex-canvas {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  outline: none;
+  background-image: radial-gradient(circle at 1px 1px, var(--ex-border) 1px, transparent 0);
+  background-size: 44px 44px;
+}
+
+.ex-canvas.is-panning {
+  cursor: grabbing;
+}
+
+.ex-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ex-edge {
+  fill: none;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.ex-edge.is-out {
+  stroke: var(--ex-pk);
+  stroke-width: 2;
+}
+
+.ex-edge.is-in {
+  stroke: var(--ex-fk);
+  stroke-width: 2;
+}
+
+.ex-edge.is-path {
+  stroke: var(--ex-path);
+  stroke-width: 3;
+}
+
+.ex-edge.is-ambient {
+  stroke: var(--ex-border2);
+  stroke-width: 1;
+}
+
+.ex-nodes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Los nodos mantienen tamaño constante en pantalla: el zoom cambia dónde están,
+   no cuánto miden. Así el nombre siempre se lee, sin bandas de zoom muertas. */
+.ex-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  max-width: 214px;
+  padding: 0 9px 0 7px;
+  background: var(--ex-surface2);
+  border: 1.5px solid var(--ex-cat, var(--ex-c-operacional));
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ex-text);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.ex-node::before {
+  content: "";
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--ex-cat, var(--ex-c-operacional));
+  flex-shrink: 0;
+}
+
+.ex-node-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ex-node-meta {
+  font-size: 9.5px;
+  color: var(--ex-text3);
+  flex-shrink: 0;
+}
+
+/* Modo punto: cuando la etiqueta chocaría con otra ya colocada. */
+.ex-node.is-dot {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border-radius: 50%;
+  border-width: 2px;
+  background: var(--ex-cat, var(--ex-c-operacional));
+  gap: 0;
+}
+
+.ex-node.is-dot::before,
+.ex-node.is-dot .ex-node-label,
+.ex-node.is-dot .ex-node-meta {
+  display: none;
+}
+
+.ex-node.is-hub {
+  height: 34px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-width: 2px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+}
+
+.ex-node.is-selected {
+  border-color: var(--ex-accent);
+  box-shadow: 0 0 0 3px var(--ex-accent-soft), 0 4px 18px rgba(0, 0, 0, 0.5);
+  z-index: 6;
+}
+
+.ex-node.is-neighbor {
+  z-index: 5;
+}
+
+.ex-node.is-hit {
+  border-color: var(--ex-accent);
+  z-index: 4;
+}
+
+.ex-node.is-path {
+  border-color: var(--ex-path);
+  box-shadow: 0 0 0 3px rgba(196, 181, 253, 0.2);
+  z-index: 5;
+}
+
+.ex-node.is-muted {
+  opacity: 0.26;
+}
+
+.ex-node:focus-visible {
+  outline: 2px solid var(--ex-accent);
+  outline-offset: 2px;
+}
+
+.ex-zone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  color: var(--ex-text3);
+  white-space: nowrap;
+  transform: translate(-50%, 0);
+  background: color-mix(in srgb, var(--ex-bg) 88%, transparent);
+  border: 1px solid var(--ex-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  text-align: center;
+}
+
+.ex-zone b {
+  display: block;
+  font-size: 12px;
+  color: var(--ex-text2);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.ex-zone span {
+  font-size: 11px;
+}
+
+.ex-float {
+  position: absolute;
+  display: flex;
+  gap: 4px;
+  z-index: 20;
+}
+
+.ex-float.bottom-left {
+  bottom: 14px;
+  left: 14px;
+  flex-direction: column;
+}
+
+.ex-zoombtn {
+  width: 30px;
+  height: 30px;
+  background: var(--ex-surface);
+  border: 1px solid var(--ex-border2);
+  border-radius: 8px;
+  color: var(--ex-text2);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ex-zoombtn:hover {
+  border-color: var(--ex-accent);
+  color: var(--ex-text);
+}
+
+.ex-minimap {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 196px;
+  background: var(--ex-surface);
+  border: 1px solid var(--ex-border2);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: var(--ex-shadow);
+}
+
+.ex-minimap canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+}
+
+.ex-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 7px 9px;
+  border-top: 1px solid var(--ex-border);
+  font-size: 9.5px;
+  color: var(--ex-text3);
+}
+
+.ex-legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.ex-hint {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ex-surface);
+  border: 1px solid var(--ex-border2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: var(--ex-text2);
+  z-index: 25;
+  box-shadow: var(--ex-shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 40px);
+}
+
+.ex-hint b {
+  color: var(--ex-text);
+}
+
+.ex-hint.is-warn {
+  border-color: var(--ex-c-estructural);
+}
+
+.ex-tooltip {
+  position: absolute;
+  z-index: 40;
+  max-width: 320px;
+  background: var(--ex-surface);
+  border: 1px solid var(--ex-border2);
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ex-text2);
+  box-shadow: var(--ex-shadow);
+  pointer-events: none;
+}
+
+.ex-tooltip b {
+  display: block;
+  font-family: var(--font-mono);
+  color: var(--ex-text);
+  margin-bottom: 3px;
+}
+
+/* ============ Panel de detalle ============ */
+
+.ex-panel {
+  width: var(--ex-panel);
+  flex-shrink: 0;
+  background: var(--ex-surface);
+  border-left: 1px solid var(--ex-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ex-panel-head {
+  padding: 12px 14px 0;
+  border-bottom: 1px solid var(--ex-border);
+}
+
+.ex-panel-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ex-panel-title h2 {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-all;
+  line-height: 1.25;
+  flex: 1;
+}
+
+.ex-close {
+  background: none;
+  border: 0;
+  color: var(--ex-text3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.ex-close:hover {
+  color: var(--ex-text);
+}
+
+.ex-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.ex-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ex-metric {
+  background: var(--ex-surface3);
+  border-radius: 7px;
+  padding: 7px 8px;
+}
+
+.ex-metric b {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ex-text);
+}
+
+.ex-metric span {
+  font-size: 9px;
+  color: var(--ex-text3);
+}
+
+.ex-tabs {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.ex-tab {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ex-text3);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.ex-tab:hover {
+  color: var(--ex-text);
+}
+
+.ex-tab[aria-selected="true"] {
+  color: var(--ex-accent);
+  border-bottom-color: var(--ex-accent);
+}
+
+.ex-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px 24px;
+  scrollbar-width: thin;
+}
+
+.ex-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ex-text2);
+  white-space: pre-line;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ex-border);
+}
+
+.ex-desc.is-empty {
+  color: var(--ex-text3);
+  font-style: italic;
+}
+
+.ex-colfilter {
+  width: 100%;
+  background: var(--ex-surface3);
+  border: 1px solid var(--ex-border2);
+  border-radius: 7px;
+  color: var(--ex-text);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 6px 10px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.ex-col {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 6px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ex-text2);
+}
+
+.ex-col:hover {
+  background: var(--ex-surface3);
+}
+
+.ex-key {
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+
+.ex-key.pk {
+  background: rgba(251, 191, 36, 0.18);
+  color: var(--ex-pk);
+}
+
+.ex-key.fk {
+  background: rgba(52, 211, 153, 0.18);
+  color: var(--ex-fk);
+}
+
+.ex-key.none {
+  background: transparent;
+}
+
+.ex-col-name {
+  flex: 1;
+  color: var(--ex-text);
+  word-break: break-all;
+}
+
+.ex-col-name.is-pk {
+  color: var(--ex-pk);
+}
+
+.ex-col-name.is-fk {
+  color: var(--ex-fk);
+}
+
+.ex-col-type {
+  font-size: 10px;
+  color: var(--ex-text3);
+  white-space: nowrap;
+}
+
+.ex-col-comment {
+  font-size: 10.5px;
+  color: var(--ex-text3);
+  padding: 0 6px 6px 35px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.ex-rel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ex-text2);
+  cursor: pointer;
+  text-align: left;
+}
+
+.ex-rel:hover {
+  background: var(--ex-surface3);
+}
+
+.ex-arrow {
+  color: var(--ex-text3);
+  flex-shrink: 0;
+}
+
+.ex-sub {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: var(--ex-text3);
+  font-weight: 700;
+  margin: 12px 0 6px;
+}
+
+.ex-sub:first-child {
+  margin-top: 0;
+}
+
+.ex-none {
+  font-size: 11.5px;
+  color: var(--ex-text3);
+  padding: 2px 6px;
+}
+
+.ex-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ex-border);
+  font-size: 11.5px;
+  color: var(--ex-text2);
+}
+
+.ex-meta-row b {
+  font-family: var(--font-mono);
+  color: var(--ex-text);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+.ex-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 20px;
+  color: var(--ex-text3);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.ex-empty h3 {
+  font-size: 13px;
+  color: var(--ex-text2);
+}
+
+.ex-empty ul {
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* En pantallas estrechas el panel se superpone en vez de robarle ancho al lienzo:
+   restarle 372 px al lienzo es lo que dejaba el mapa bajo el zoom mínimo útil. */
+@media (max-width: 1400px) {
+  .ex-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    box-shadow: var(--ex-shadow);
+  }
+}
+
+@media (max-width: 1100px) {
+  .ex-rail {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 31;
+    box-shadow: var(--ex-shadow);
+  }
+}
+
+.ex-note {
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--ex-text3);
+  background: var(--ex-surface3);
+  border-radius: 6px;
+  padding: 7px 9px;
+  margin-bottom: 8px;
+}
+
+.ex-note b {
+  color: var(--ex-text2);
+  font-family: var(--font-mono);
+}

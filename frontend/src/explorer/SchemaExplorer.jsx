@@ -2,7 +2,7 @@
 // dataset que recibe, porque ambos JSON comparten forma.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CATEGORY_ORDER } from '../lib/categories.js'
-import { formatInt } from '../lib/format.js'
+import { formatCompact, formatInt } from '../lib/format.js'
 import { replaceRoute } from '../lib/router.js'
 import { buildIndex, countByCategory, inferRelations, shortestPath } from './graph.js'
 import { computeLayout } from './layout.js'
@@ -24,12 +24,23 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
   const [selected, setSelected] = useState(initialTable || null)
   const [query, setQuery] = useState('')
   const [visibleCats, setVisibleCats] = useState(() => new Set(CATEGORY_ORDER))
-  const [showAllEdges, setShowAllEdges] = useState(false)
+  const [showAllEdges, setShowAllEdges] = useState(true) // ambiente encendido: muy tenue, da textura
   const [hover, setHover] = useState(null)
   const [pathMode, setPathMode] = useState(null) // { from } mientras se elige el destino
   const [path, setPath] = useState(null)
   const [focusToken, setFocusToken] = useState(null)
   const [status, setStatus] = useState({ zoom: 1, visible: 0, labelled: 0 })
+  // Paneles colapsables: el analista decide cuánto ancho de lienzo cede al texto.
+  const [railOff, setRailOff] = useState(() => localStorage.getItem('ex-rail') === 'off')
+  const [panelOff, setPanelOff] = useState(() => localStorage.getItem('ex-panel') === 'off')
+
+  useEffect(() => {
+    localStorage.setItem('ex-rail', railOff ? 'off' : 'on')
+  }, [railOff])
+
+  useEffect(() => {
+    localStorage.setItem('ex-panel', panelOff ? 'off' : 'on')
+  }, [panelOff])
 
   const canvasRef = useRef(null)
   const viewRef = useRef({ zoom: 0.5, panX: 0, panY: 0 })
@@ -42,6 +53,22 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
   const table = selected ? index.tableMap.get(selected) : null
   const neighbors = useMemo(() => (selected ? index.neighbors.get(selected) : null), [index, selected])
   const pathNodes = useMemo(() => (path?.nodes ? new Set(path.nodes) : null), [path])
+
+  // KPIs vivos como el header del original: con selección miden la tabla y sus vecinas;
+  // sin selección, lo visible según filtros.
+  const kpis = useMemo(() => {
+    const scope = selected && neighbors ? [...neighbors, selected] : null
+    const list = scope
+      ? schema.tables.filter((t) => scope.includes(t.name))
+      : schema.tables.filter((t) => visibleCats.has(t.category))
+    const nameSet = new Set(list.map((t) => t.name))
+    return {
+      tables: list.length,
+      cols: list.reduce((a, t) => a + t.col_count, 0),
+      fks: schema.fks.filter((fk) => nameSet.has(fk.from_table) && nameSet.has(fk.to_table)).length,
+      rows: list.reduce((a, t) => a + t.num_rows, 0),
+    }
+  }, [schema, selected, neighbors, visibleCats])
 
   // El enlace directo (#/saff?t=TABLA) se mantiene al día sin ensuciar el historial.
   useEffect(() => {
@@ -214,8 +241,9 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
   const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
   const hoverTable = hover ? index.tableMap.get(hover.name) : null
 
+  const shellClass = `ex${railOff ? ' rail-off' : ''}${panelOff ? ' panel-off' : ''}`
   return (
-    <div className="ex">
+    <div className={shellClass}>
       <SideRail
         schema={schema}
         catCounts={catCounts}
@@ -232,6 +260,15 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
 
       <div className="ex-main">
         <div className="ex-toolbar">
+          <button
+            className="ex-btn is-icon"
+            aria-pressed={!railOff}
+            aria-label={railOff ? 'Mostrar riel lateral' : 'Ocultar riel lateral'}
+            title={railOff ? 'Mostrar riel lateral' : 'Ocultar riel lateral'}
+            onClick={() => setRailOff((v) => !v)}
+          >
+            ◧
+          </button>
           <button className="ex-btn" onClick={() => mapApiRef.current?.fitCore()}>
             Encuadrar núcleo
           </button>
@@ -246,7 +283,7 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
             Todas las relaciones
           </button>
           <button
-            className="ex-btn"
+            className="ex-btn ex-btn--primary"
             aria-pressed={!!pathMode || !!path}
             onClick={() => {
               if (path || pathMode) {
@@ -259,16 +296,39 @@ export default function SchemaExplorer({ schema, tab, initialTable }) {
           </button>
 
           <span className="ex-spacer" />
+          <div className={`ex-kpis${selected ? ' is-scoped' : ''}`}>
+            <span className="ex-kpi">
+              <b>{formatInt(kpis.tables)}</b>tablas
+            </span>
+            <span className="ex-kpi">
+              <b>{formatInt(kpis.cols)}</b>columnas
+            </span>
+            <span className="ex-kpi">
+              <b>{formatInt(kpis.fks)}</b>relaciones
+            </span>
+            <span className="ex-kpi">
+              <b>{formatCompact(kpis.rows)}</b>registros
+            </span>
+          </div>
           <span className="ex-stat">
-            <b>{formatInt(schema.tables.length)}</b> tablas · <b>{formatInt(schema.fks.length)}</b>{' '}
-            relaciones · <b>{status.labelled}</b> con nombre a la vista · zoom{' '}
-            <b>{Math.round(status.zoom * 100)}%</b>
+            zoom {Math.round(status.zoom * 100)}% · {status.labelled} nombradas
           </span>
-          <button className="ex-btn" onClick={doExportPng}>
-            PNG
-          </button>
-          <button className="ex-btn" onClick={() => exportSchemaCsv(schema, index)}>
-            CSV
+          <span className="ex-btngroup">
+            <button className="ex-btn" onClick={doExportPng}>
+              PNG
+            </button>
+            <button className="ex-btn" onClick={() => exportSchemaCsv(schema, index)}>
+              CSV
+            </button>
+          </span>
+          <button
+            className="ex-btn is-icon"
+            aria-pressed={!panelOff}
+            aria-label={panelOff ? 'Mostrar panel de detalle' : 'Ocultar panel de detalle'}
+            title={panelOff ? 'Mostrar panel de detalle' : 'Ocultar panel de detalle'}
+            onClick={() => setPanelOff((v) => !v)}
+          >
+            ◨
           </button>
         </div>
 

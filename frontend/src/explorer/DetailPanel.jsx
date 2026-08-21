@@ -190,6 +190,17 @@ function Metadata({ table }) {
 export default function DetailPanel({ table, index, inferred, onGo, onClose, onPathFrom }) {
   const [tab, setTab] = useState('columnas')
 
+  // Máximos del esquema: dan escala a las micro-barras de las métricas.
+  const maxFks = useMemo(() => {
+    let mi = 1
+    let mo = 1
+    for (const t of index.tableMap.values()) {
+      if (t.fk_in > mi) mi = t.fk_in
+      if (t.fk_out > mo) mo = t.fk_out
+    }
+    return { in: mi, out: mo }
+  }, [index])
+
   if (!table) {
     return (
       <aside className="ex-panel">
@@ -243,10 +254,16 @@ export default function DetailPanel({ table, index, inferred, onGo, onClose, onP
           <div className="ex-metric">
             <b>{table.fk_in}</b>
             <span>dependen</span>
+            <div className="ex-metric-bar is-in">
+              <i style={{ width: `${Math.max(table.fk_in ? 8 : 0, (table.fk_in / maxFks.in) * 100)}%` }} />
+            </div>
           </div>
           <div className="ex-metric">
             <b>{table.fk_out}</b>
             <span>referencia</span>
+            <div className="ex-metric-bar is-out">
+              <i style={{ width: `${Math.max(table.fk_out ? 8 : 0, (table.fk_out / maxFks.out) * 100)}%` }} />
+            </div>
           </div>
         </div>
         <div className="ex-tabs" role="tablist">

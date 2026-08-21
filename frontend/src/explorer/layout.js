@@ -23,9 +23,9 @@ export const NODE_H = 44
 const byName = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 
 const SLOT_ARC = NODE_W + 34 // arco mínimo que ocupa un nodo dentro de un anillo
-const RING_GAP = 150 // separación entre anillos de distancia
+export const RING_GAP = 150 // separación entre anillos de distancia
 const SUB_RING_GAP = 78 // separación cuando un anillo no cabe de una vez
-const HUB_RADIUS = 330 // radio donde se sientan los hubs
+export const HUB_RADIUS = 330 // radio donde se sientan los hubs
 const MIN_SWEEP = 0.34 // ningún sector puede ser tan estrecho que no quepa un nodo
 const ZONE_GAP = 210
 const BAND_MAX_W = 2400
@@ -237,7 +237,8 @@ function layoutIsolated(names, positions, startY) {
       ring: 0,
     })
   })
-  return { height: Math.ceil(sorted.length / cols) * (NODE_H + 20), width }
+  const h = Math.ceil(sorted.length / cols) * (NODE_H + 20)
+  return { height: h, width, box: { x: left - 24, y: startY - 18, w: width + 48, h: h + 36 } }
 }
 
 /**
@@ -342,6 +343,7 @@ export function computeLayout(schema, index) {
       y: cursorY,
       height: res.height,
       width: res.width,
+      boxes: [res.box],
     })
     cursorY += res.height
   }

@@ -11,7 +11,7 @@
 // 3. El paneo y el zoom viven en una referencia y se escriben dentro de un rAF. React
 //    no re-renderiza en cada muesca de rueda: con 327 nodos eso sería inusable.
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
-import { NODE_H, NODE_W } from './layout.js'
+import { HUB_RADIUS, NODE_H, NODE_W, RING_GAP } from './layout.js'
 
 const MIN_ZOOM_FACTOR = 0.85 // el suelo del zoom es relativo al encuadre, no una constante
 const MAX_ZOOM = 3.2
@@ -19,6 +19,8 @@ const LABEL_PAD_X = 12
 const LABEL_PAD_Y = 8
 const CHIP_H = 28
 const HUB_H = 34
+const SUB_H = 15 // alto extra de la mini-ficha expandida
+const EXPAND_ZOOM = 1.35 // zoom desde el cual los hubs muestran su ficha
 // Desplazamientos de rótulo, en múltiplos de la altura del chip, en orden de preferencia.
 const NUDGES = [0, -1, 1, -2, 2, -3, 3]
 
@@ -79,6 +81,9 @@ export default function MapCanvas({
       el.tabIndex = -1
       el.style.setProperty('--ex-cat', `var(--ex-c-${table.category})`)
 
+      const main = document.createElement('span')
+      main.className = 'ex-node-main'
+
       const label = document.createElement('span')
       label.className = 'ex-node-label'
       label.textContent = table.name
@@ -87,7 +92,14 @@ export default function MapCanvas({
       meta.className = 'ex-node-meta'
       meta.textContent = table.fk_total > 0 ? `${table.fk_total}↔` : `${table.col_count}c`
 
-      el.append(label, meta)
+      // Línea secundaria de la mini-ficha: contexto sin abrir el panel lateral.
+      const sub = document.createElement('span')
+      sub.className = 'ex-node-sub'
+      sub.textContent =
+        table.comment || `${table.fk_in} dependen · ${table.fk_out} referencia · ${table.col_count} col`
+
+      main.append(label, meta)
+      el.append(main, sub)
       layer.appendChild(el)
       elements.set(table.name, el)
     }
@@ -184,9 +196,11 @@ export default function MapCanvas({
       const isHub = !!pos.isHub
       const pinned = isSelected || isPath
       const preferred = pinned || isNeighbor || isHit || isHub
+      // Mini-ficha: lo que se está mirando siempre; los hubs al acercarse.
+      const expandable = pinned || isHit || (isHub && zoom >= EXPAND_ZOOM)
 
-      const h = isHub ? HUB_H : CHIP_H
-      const w = chipWidth(name, isHub)
+      const h = (isHub ? HUB_H : CHIP_H) + (expandable ? SUB_H : 0)
+      const w = expandable ? Math.min(280, chipWidth(name, isHub) + 60) : chipWidth(name, isHub)
       const boxX = sx - w / 2
       const boxY = sy - h / 2
       const bw = w + LABEL_PAD_X * 2
@@ -221,6 +235,7 @@ export default function MapCanvas({
       // Se reconstruye la clase completa: es una sola escritura y evita estados pegados.
       let cls = 'ex-node'
       if (!asChip) cls += ' is-dot'
+      if (asChip && expandable) cls += ' is-expanded'
       if (isHub) cls += ' is-hub'
       if (isSelected) cls += ' is-selected'
       else if (isNeighbor) cls += ' is-neighbor'
@@ -530,10 +545,50 @@ export default function MapCanvas({
     })
   }
 
+  // Radios de anillo del núcleo: guías tenues que revelan la estructura orbital.
+  const ringRadii = []
+  if (layout.coreRadius >= HUB_RADIUS) {
+    for (let r = HUB_RADIUS; r <= layout.coreRadius + 1; r += RING_GAP) ringRadii.push(r)
+  }
+
   return (
     <div className="ex-canvas" ref={wrapRef} tabIndex={0} role="application" aria-label="Mapa de tablas">
       <svg className="ex-edges">
+        <defs>
+          {['out', 'in', 'path'].map((kind) => (
+            <marker
+              key={kind}
+              id={`ex-am-${kind}`}
+              viewBox="0 0 8 8"
+              refX="7"
+              refY="4"
+              markerWidth="7.5"
+              markerHeight="7.5"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path d="M0,0 L8,4 L0,8 Z" className={`ex-arrowfill is-${kind}`} />
+            </marker>
+          ))}
+        </defs>
         <g ref={edgeGroupRef}>
+          {ringRadii.map((r) => (
+            <circle key={r} className="ex-ring" cx={layout.coreCenter.x} cy={layout.coreCenter.y} r={r} />
+          ))}
+          {/* Contenedores de zona: los grupos aparte y las tablas sueltas dejan de flotar */}
+          {layout.zones.flatMap((z) =>
+            (z.boxes || []).map((b, i) => (
+              <rect
+                key={`${z.id}-${i}`}
+                className="ex-zonebg"
+                x={b.x}
+                y={b.y}
+                width={b.w}
+                height={b.h}
+                rx={16}
+              />
+            )),
+          )}
           {edges.map((e) => {
             const x1 = e.a.x + NODE_W / 2
             const y1 = e.a.y + NODE_H / 2
@@ -541,7 +596,17 @@ export default function MapCanvas({
             const y2 = e.b.y + NODE_H / 2
             const mx = (x1 + x2) / 2 - (y2 - y1) * 0.09
             const my = (y1 + y2) / 2 + (x2 - x1) * 0.09
-            return <path key={e.key} className={`ex-edge ${e.cls}`} d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`} />
+            const marker = ['is-out', 'is-in', 'is-path'].includes(e.cls)
+              ? `url(#ex-am-${e.cls.slice(3)})`
+              : undefined
+            return (
+              <path
+                key={e.key}
+                className={`ex-edge ${e.cls}`}
+                d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`}
+                markerEnd={marker}
+              />
+            )
           })}
         </g>
       </svg>

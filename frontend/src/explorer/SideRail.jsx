@@ -3,6 +3,19 @@ import { useMemo } from 'react'
 import { CATEGORIES, CATEGORY_ORDER } from '../lib/categories.js'
 import { formatCompact } from '../lib/format.js'
 
+/** Resalta el fragmento consultado dentro del texto del resultado. */
+function Hi({ text, q }) {
+  const i = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1
+  if (i < 0) return text
+  return (
+    <>
+      {text.slice(0, i)}
+      <mark>{text.slice(i, i + q.length)}</mark>
+      {text.slice(i + q.length)}
+    </>
+  )
+}
+
 function SearchResults({ results, onGo }) {
   const { counts, query } = results
 
@@ -37,7 +50,9 @@ function SearchResults({ results, onGo }) {
           {results.tables.map(({ table }) => (
             <button className="ex-res" key={table.name} onClick={() => onGo(table.name)}>
               <span className="ex-res-dot" style={{ background: `var(--ex-c-${table.category})` }} />
-              <span>{table.name}</span>
+              <span>
+                <Hi text={table.name} q={query} />
+              </span>
               <span className="ex-res-sub" style={{ marginLeft: 'auto' }}>
                 {table.col_count}c
               </span>
@@ -57,7 +72,9 @@ function SearchResults({ results, onGo }) {
               <span>
                 {table.name}
                 <span className="ex-res-sub">.</span>
-                <span className="ex-res-strong">{column.name}</span>
+                <span className="ex-res-strong">
+                  <Hi text={column.name} q={query} />
+                </span>
               </span>
             </button>
           ))}
@@ -117,6 +134,12 @@ export default function SideRail({
           />
           <kbd>/</kbd>
         </div>
+        {/* Breadcrumb: dónde estoy y cómo vuelvo (limpia la selección) */}
+        {selected && (
+          <button className="ex-crumb" onClick={() => onGo(null)} title="Volver a la vista general">
+            {schema.meta.label} › <b>{selected}</b>
+          </button>
+        )}
       </div>
 
       <div className="ex-scroll">

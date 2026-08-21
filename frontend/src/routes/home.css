@@ -3,9 +3,13 @@
 .home {
   height: 100%;
   overflow-y: auto;
+  /* Misma retícula que el lienzo del explorador: portada y mapa se leen como un sistema */
   background:
     radial-gradient(1100px 460px at 12% -8%, var(--accent-soft), transparent 65%),
+    linear-gradient(color-mix(in srgb, var(--border2) 38%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border2) 38%, transparent) 1px, transparent 1px),
     var(--bg);
+  background-size: auto, 44px 44px, 44px 44px, auto;
 }
 
 .home-inner {
@@ -88,6 +92,8 @@
   font-family: inherit;
   color: inherit;
   transition: border-color 0.15s, transform 0.15s;
+  /* Franja de identidad arriba, como la de categoría en las tarjetas del diagrama */
+  border-top: 3px solid var(--accent);
 }
 
 .view-card:hover {

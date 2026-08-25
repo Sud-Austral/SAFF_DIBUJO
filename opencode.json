@@ -1,18 +1,18 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "local/qwen2.5-coder-3b-instruct", 
+  "model": "local/qwen2.5-coder:7b-instruct-q3_K_M", 
   "provider": {
     "local": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Qwen Local RTX 2050",
+      "name": "Ollama RTX 2050 (7B)",
       "options": {
-        "baseURL": "http://127.0.0.1:12345/v1"
+        "baseURL": "http://127.0.0.1:11434/v1"
       },
       "models": {
-        "qwen2.5-coder-3b-instruct": { 
-          "name": "Qwen2.5-Coder-3B-Instruct",
+        "qwen2.5-coder:7b-instruct-q3_K_M": { 
+          "name": "Qwen2.5-Coder-7B (Q3_K_M)",
           "limit": {
-            "context": 2048,
+            "context": 4096,
             "output": 1024
           }
         }

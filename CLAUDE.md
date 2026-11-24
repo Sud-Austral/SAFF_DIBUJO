@@ -3,6 +3,10 @@
 ## ¿Qué es este proyecto?
 Este repositorio forma parte de la Unidad de Información y Análisis (UIA) de CONAF.
 
+Explorador web de los modelos de datos SAFF (Oracle) y SIDCO (PostgreSQL), más el diagrama
+original (`index.html`) portado en la pestaña Legacy. Publicado en GitHub Pages bajo
+`/SAFF_DIBUJO/`; vistas, scripts de datos y despliegue están en el [README](README.md), que manda en eso.
+
 ---
 
 ## Comandos de Referencia Rápida
@@ -22,7 +26,7 @@ Este repositorio forma parte de la Unidad de Información y Análisis (UIA) de C
 
 ## Guía de Estilo y Convenciones
 - **Idioma del código:** Inglés para infraestructura, nombres de variables y funciones. Español para comentarios de negocio e interfaz de usuario.
-- **Frontend JavaScript/TypeScript:** Estilo `camelCase` para variables y funciones, `PascalCase` para componentes React y tipos. Cumplir con ESLint/Prettier.
+- **Frontend JavaScript/TypeScript:** Estilo `camelCase` para variables y funciones, `PascalCase` para componentes React y tipos. El lint es oxlint (`npm run lint`); no hay ESLint ni Prettier configurados.
 - **Trazabilidad:** Cada cambio debe rastrearse directamente a un requerimiento o corrección solicitada.
 
 
@@ -40,3 +44,13 @@ Este repositorio forma parte de la Unidad de Información y Análisis (UIA) de C
 ### 3. Ejecución Orientada a Objetivos
 - Define el criterio de éxito para cada cambio.
 - Comprueba que tus modificaciones no introduzcan errores de compilación o de linting.
+
+## Estado comprobado y trampas (2026-11-24)
+
+- `npm ci`, `npm run build` (incluye `npm run data`) y `npm run lint` (oxlint, salida 0) pasan.
+- **El build reescribe `frontend/src/data/summary.json`** con finales de línea distintos en Windows:
+  `git status` lo marca modificado aunque el contenido sea el mismo. Restáuralo con
+  `git checkout -- frontend/src/data/summary.json` si no cambiaste las fuentes.
+- **README con dueño declarado:** `.github/workflows/readme.yml` llama al generador
+  `Sud-Austral/coipo_aireadme` en cada push a `main`, pero el README sólo tiene commits humanos
+  (ninguno del bot). No se tocó; decidir si se borra ese workflow (en otros repos ya se quitó).
